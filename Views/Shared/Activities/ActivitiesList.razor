@@ -1,0 +1,81 @@
+﻿@using CSIX.Model;
+@using CSIX.Services;
+@using CSIX.Views.Shared.GenericComponents
+@inject IDBService _dbService
+@code {
+    public List<ActivityModel> Model { get; set; }
+    protected override void OnInitialized()
+    {
+        Model = _dbService.GetAllActivities();
+    }
+}
+<div class="col-12">
+    <div class="row">
+        
+            <h3 class="col-8">Activities</h3>
+        <div class="col-1 Customlinks card-title ml-auto" style="align-self: center;">
+               <span class="Clickable" onclick="OpenActivities('','','')" ><i class="fa fa-plus-circle Black" aria-hidden="true"></i></span>
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div id="ActivityComponent" class="col-12 CardScroller">
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Description
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Description
+                    </td>
+                    <td>
+                        <span class="Clickable" onclick="OpenActivities('@item.Id', '@item.Name', '@item.Description')"><i class="fa fa-edit Black" aria-hidden="true"></i></span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+</div>
+<div id="ActivityModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="CloseModal('ActivityModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="ActivityId" name="ActivityId" value="" />
+                <RowComponent DisplayName="Name" Id="ActivityName" InputType="Text" SpecialClass="col-lg-12" />
+                <RowComponent DisplayName="Description" Id="ActivityDescription" InputType="Text" SpecialClass="col-lg-12" />
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button id="CreateAccountBtn" onclick="Activity_Create()" type="button" class="w-100 btn btn-lg btn-primary">Save</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>

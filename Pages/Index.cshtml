@@ -1,0 +1,46 @@
+﻿@page
+
+@using CSIX.Data;
+@using Microsoft.AspNetCore.Identity;
+@using CSIX.Views.Shared.Activities
+@using CSIX.Views.Shared.Tasks
+
+@model IndexModel
+
+@inject SignInManager<CSIXUser> SignInManager
+@inject UserManager<CSIXUser> UserManager
+
+@{
+    ViewData["Title"] = "Home page";
+}
+@if (SignInManager.IsSignedIn(User))
+{
+    var UserId = UserManager.GetUserId(User);
+    <script>
+        MyUserId = '@UserId';
+    </script>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="HomeCard">
+                <component type="typeof(TasksList)" render-mode="ServerPrerendered" />
+            </div>
+            <div class="HomeCard">
+                <component type="typeof(MyTasksList)" render-mode="ServerPrerendered"
+                       param-UserId="UserId" />
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="HomeCard">
+                <component type="typeof(ActivitiesList)" render-mode="ServerPrerendered" />
+            </div>
+
+
+        </div>
+
+
+    </div>
+}
+else
+{
+    <h1>Please Login</h1>
+}

@@ -1,0 +1,115 @@
+﻿@using CSIX.Model;
+@using CSIX.Services;
+@using CSIX.Views.Shared.GenericComponents
+@inject IDBService _dbService
+@code {
+    public List<TaskModel> Model { get; set; }
+    public List<KeyValuePair<string, string>> StatusValues { get; set; }
+    public List<KeyValuePair<string, string>> UsersValues { get; set; }
+    public List<KeyValuePair<string, string>> ActivitiesValues { get; set; }
+    protected override void OnInitialized()
+    {
+        Model = _dbService.GetAllTasks();
+        StatusValues = new List<KeyValuePair<string, string>>()
+        {
+            new KeyValuePair<string, string>("0", "New"),
+            new KeyValuePair<string, string>("1", "In-Progress"),
+            new KeyValuePair<string, string>("2", "Done"),
+        };
+        ActivitiesValues = _dbService.GetAllActivities().Select(x => new KeyValuePair<string, string>(x.Id, x.Name)).ToList();
+        UsersValues = _dbService.GetAllUsers().Select(x => new KeyValuePair<string, string>(x.Id, x.Name)).ToList();
+
+    }
+}
+<div class="col-12">
+    <div class="row">
+
+        <h3 class="col-8">Tasks</h3>
+        <div class="col-1 Customlinks card-title ml-auto" style="align-self: center;">
+            <span class="Clickable" onclick="OpenTasks('','','', 0, '', '')"><i class="fa fa-plus-circle Black" aria-hidden="true"></i></span>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div id="TaskComponent" class="col-12 CardScroller">
+
+    @if (Model != null)
+    {
+        <table class="table" id="AllTasksTable">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Activity
+                    </th>
+                    <th>
+                        Assigned To
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="AllTasksBody">
+                @foreach (var item in Model)
+                {
+                    <tr class="Item" id="AllTasks_@item.Id">
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @item.Description
+                        </td>
+                        <td>
+                            @item.StatusName
+                        </td>
+                        <td>
+                            @item.ActivityName
+                        </td>
+                        <td>
+                            @item.UserName
+                        </td>
+                        <td>
+                            <span class="Clickable" onclick="OpenTasks('@item.Id', '@item.Name', '@item.Description', @item.Status, '@item.ActivityId', '@item.UserId')"><i class="fa fa-edit Black" aria-hidden="true"></i></span>
+                            <i class="fa fa-close Black Clickable" onclick="DeleteTask('@item.Id', '@item.Name')" aria-hidden="true"></i>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+<div id="TaskModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="CloseModal('TaskModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="TaskId" name="TaskId" value="" />
+                <RowComponent DisplayName="Name" Id="TaskName" InputType="Text" SpecialClass="col-lg-12" />
+                <RowComponent DisplayName="Description" Id="TaskDescription" InputType="Text" SpecialClass="col-lg-12" />
+                <RowSelectComponent DisplayName="Status" Id="TaskStatus" SpecialClass="col-lg-12" Values="@StatusValues" />
+                <RowSelectComponent DisplayName="User" Id="TaskUser" SpecialClass="col-lg-12" Values="@UsersValues" />
+                <RowSelectComponent DisplayName="Activity" Id="TaskActivity" SpecialClass="col-lg-12" Values="@ActivitiesValues" />
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button id="CreateAccountBtn" onclick="Task_Create()" type="button" class="w-100 btn btn-lg btn-primary">Save</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>

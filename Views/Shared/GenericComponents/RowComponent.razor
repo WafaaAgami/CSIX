@@ -1,0 +1,29 @@
+﻿@code {
+    [Parameter]
+    public string DisplayName { get; set; }
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public string InputType { get; set; } = "text";
+    [Parameter]
+    public string SpecialClass { get; set; } = "";
+    public string DivId
+    {
+        get
+        {
+            return Id + "Div";
+        }
+    }
+    public string ValidationId
+    {
+        get
+        {
+            return Id + "Validation";
+        }
+    }
+}
+<div class="form-group @SpecialClass row" id="@DivId">
+    <label for="@Id" class="control-label col-lg-3">@DisplayName</label>
+    <input class="col-lg-9" type="@InputType" id="@Id" name="@Id" value="" />
+    <span id="@ValidationId" class="text-danger col-lg-12"></span>
+</div>
